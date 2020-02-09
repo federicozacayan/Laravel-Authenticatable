@@ -1,0 +1,192 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Laravel Authenticatable">
+  <title>Laravel Authenticatable</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link href="https://federicozacayan.github.io/tutorial/css/prism.css" rel="stylesheet">
+<style>
+p {
+    margin: 0;
+}
+</style>
+<style>textarea {
+  width: 100%;
+  margin: .5rem auto; }
+
+.buttons button {
+  cursor: pointer;
+  background-color: #00b7ff;
+  padding: .5rem;
+  margin: .5rem;
+  border-radius: 1rem;
+  color: white;
+  text-transform: capitalize;
+  display: inline-block;
+  width: auto; }
+
+button {
+  width: 50%; }
+
+.styler {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 1rem; }
+  .styler .background {
+    position: fixed;
+    background-color: #000;
+    opacity: .5;
+    height: 200px;
+    top: 0;
+    margin-left: -1rem;
+    float: left;
+    width: 100%;
+    z-index: -1;
+    height: 100vh; }
+</style></head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"><div class="container"><div><div><h1>Laravel Authenticatable</h1><p>Install laravel/ui.</p><pre class="  language-html"><code class="  language-html">composer require laravel/ui --dev</code></pre><p>Install javascript tools.</p><pre class="  language-html"><code class="  language-html">php artisan ui vue --auth</code></pre><p>Run javascript tools.</p><pre class="  language-html"><code class="  language-html">npm install &amp;&amp; npm run dev</code></pre><h2>Create a model</h2><pre class="  language-html"><code class="  language-html">php artisan make:model Administrator --all
+</code></pre><p>After configuring database run the migrations.</p><pre class="  language-html"><code class="  language-html">php artisan migrate</code></pre><p>Copy and paste user model and change the class name and the file name by Administrator and app/Administrator.php.</p><pre class="  language-javascript"><code class="  language-javascript"><span class="token keyword">class</span> <span class="token class-name">Administrator</span> <span class="token keyword">extends</span> <span class="token class-name">Authenticatable</span></code></pre><p>Add a new guard in config/auth.php.</p><pre class="  language-javascript"><code class="  language-javascript"><span class="token string">'guards'</span> <span class="token operator">=&gt;</span> <span class="token punctuation">[</span>
+    <span class="token operator">...</span>
+    <span class="token string">'admins'</span> <span class="token operator">=&gt;</span> <span class="token punctuation">[</span>
+        <span class="token string">'driver'</span> <span class="token operator">=&gt;</span> <span class="token string">'session'</span><span class="token punctuation">,</span>
+        <span class="token string">'provider'</span> <span class="token operator">=&gt;</span> <span class="token string">'admins'</span><span class="token punctuation">,</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span><span class="token punctuation">,</span></code></pre><p>Add a new provider also in the same file.</p><pre class="  language-javascript"><code class="  language-javascript"><span class="token string">'providers'</span> <span class="token operator">=&gt;</span> <span class="token punctuation">[</span>
+    <span class="token operator">...</span>
+    <span class="token string">'admins'</span> <span class="token operator">=&gt;</span> <span class="token punctuation">[</span>
+        <span class="token string">'driver'</span> <span class="token operator">=&gt;</span> <span class="token string">'eloquent'</span><span class="token punctuation">,</span>
+        <span class="token string">'model'</span> <span class="token operator">=&gt;</span> App\Administrator<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token keyword">class</span><span class="token punctuation">,</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span><span class="token punctuation">,</span></code></pre><p>Also the password section.</p><pre class="  language-javascript"><code class="  language-javascript"><span class="token string">'passwords'</span> <span class="token operator">=&gt;</span> <span class="token punctuation">[</span>
+    <span class="token operator">...</span>
+    <span class="token string">'admins'</span> <span class="token operator">=&gt;</span> <span class="token punctuation">[</span>
+        <span class="token string">'provider'</span> <span class="token operator">=&gt;</span> <span class="token string">'admins'</span><span class="token punctuation">,</span>
+        <span class="token string">'table'</span> <span class="token operator">=&gt;</span> <span class="token string">'password_resets'</span><span class="token punctuation">,</span>
+        <span class="token string">'expire'</span> <span class="token operator">=&gt;</span> <span class="token number">60</span><span class="token punctuation">,</span>
+        <span class="token string">'throttle'</span> <span class="token operator">=&gt;</span> <span class="token number">60</span><span class="token punctuation">,</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span><span class="token punctuation">,</span></code></pre><p>Add some routes in routes/web.php file.</p><pre class="  language-javascript"><code class="  language-javascript">Route<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/admin/login'</span><span class="token punctuation">,</span> <span class="token string">'AdministratorController@showLoginForm'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+Route<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/admin/login'</span><span class="token punctuation">,</span> <span class="token string">'AdministratorController@login'</span><span class="token punctuation">)</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token string">'admin.login'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+Route<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/admin/area'</span><span class="token punctuation">,</span> <span class="token string">'AdministratorController@secret'</span><span class="token punctuation">)</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token string">'admin.area'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+Route<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/admin/password/reset'</span><span class="token punctuation">,</span><span class="token string">'AdminForgotPasswordController@showLinkRequestForm'</span><span class="token punctuation">)</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token string">'admin.password.request'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+Route<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/admin/password/email'</span><span class="token punctuation">,</span><span class="token string">'AdminForgotPasswordController@sendResetLinkEmail'</span><span class="token punctuation">)</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token string">'admin.password.email'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+Route<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/admin/password/reset/{token}'</span><span class="token punctuation">,</span><span class="token string">'AdminResetPasswordController@showResetForm'</span><span class="token punctuation">)</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token string">'password.reset'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+Route<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/admin/password/reset'</span><span class="token punctuation">,</span><span class="token string">'AdminResetPasswordController@reset'</span><span class="token punctuation">)</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token string">'password.update'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+Route<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/admin/password/confirm'</span><span class="token punctuation">,</span> <span class="token string">'AdministratorConfirmPasswordController@showConfirmForm'</span><span class="token punctuation">)</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token string">'admin.password.confirm'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+Route<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/admin/password/confirm'</span><span class="token punctuation">,</span> <span class="token string">'AdministratorConfirmPasswordController@confirm'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre><p>Create controller for reset password request.</p><pre class="  language-javascript"><code class="  language-javascript">php artisan make<span class="token punctuation">:</span>controller AdminForgotPasswordController</code></pre><p>app/Http/Controllers/AdminForgotPasswordController.php</p><pre class="  language-javascript"><code class="  language-javascript"><span class="token operator">&lt;</span><span class="token operator">?</span>php
+namespace App\Http\Controllers\Auth<span class="token punctuation">;</span>
+use App\Http\Controllers\Controller<span class="token punctuation">;</span>
+use Illuminate\Foundation\Auth\SendsPasswordResetEmails<span class="token punctuation">;</span>
+<span class="token keyword">class</span> <span class="token class-name">AdminForgotPasswordController</span> <span class="token keyword">extends</span> <span class="token class-name">Controller</span>
+<span class="token punctuation">{</span>
+    use SendsPasswordResetEmails<span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function">broker</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> Password<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token function">broker</span><span class="token punctuation">(</span><span class="token string">'admins'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre><p>Create controller for reset password process.</p><pre class="  language-javascript"><code class="  language-javascript">php artisan make<span class="token punctuation">:</span>controller AdministratorResetPasswordController</code></pre><p>app/Http/Controllers/AdminResetPasswordController.php</p><pre class="  language-javascript"><code class="  language-javascript"><span class="token operator">&lt;</span><span class="token operator">?</span>php
+namespace App\Http\Controllers\Auth<span class="token punctuation">;</span>
+use App\Http\Controllers\Controller<span class="token punctuation">;</span>
+use App\Providers\RouteServiceProvider<span class="token punctuation">;</span>
+use Illuminate\Foundation\Auth\ResetsPasswords<span class="token punctuation">;</span>
+<span class="token keyword">class</span> <span class="token class-name">AdminResetPasswordController</span> <span class="token keyword">extends</span> <span class="token class-name">Controller</span>
+<span class="token punctuation">{</span>
+    use ResetsPasswords<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> $redirectTo <span class="token operator">=</span> RouteServiceProvider<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token constant">HOME</span><span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function">broker</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> Password<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token function">broker</span><span class="token punctuation">(</span><span class="token string">'admins'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre><p>Create controller for confirm password reset process.</p><pre class="  language-html"><code class="  language-html">php artisan make:controller AdminConfirmPasswordController</code></pre><p>Set up the controller in app/Http/Controllers/AdministratorController.php file.</p><pre class="  language-javascript"><code class="  language-javascript"><span class="token operator">&lt;</span><span class="token operator">?</span>php
+namespace App\Http\Controllers\Auth<span class="token punctuation">;</span>
+use App\Http\Controllers\Controller<span class="token punctuation">;</span>
+use App\Providers\RouteServiceProvider<span class="token punctuation">;</span>
+use Illuminate\Foundation\Auth\ConfirmsPasswords<span class="token punctuation">;</span>
+<span class="token keyword">class</span> <span class="token class-name">AdministratorConfirmPasswordController</span> <span class="token keyword">extends</span> <span class="token class-name">Controller</span>
+<span class="token punctuation">{</span>
+    use ConfirmsPasswords<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> $redirectTo <span class="token operator">=</span> RouteServiceProvider<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token constant">HOME</span><span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function">__construct</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        $<span class="token keyword">this</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">middleware</span><span class="token punctuation">(</span><span class="token string">'auth'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function">showConfirmForm</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token function">view</span><span class="token punctuation">(</span><span class="token string">'admin.confirm'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><p>Now the templates.</p><pre class="  language-html"><code class="  language-html">@extends('admin.app')
+...
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>form</span> <span class="token attr-name">method</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>POST<span class="token punctuation">"</span></span> <span class="token attr-name">action</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>{{ route('admin.password.update') }}<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>form</span> <span class="token attr-name">method</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>POST<span class="token punctuation">"</span></span> <span class="token attr-name">action</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>{{ route('admin.password.confirm') }}<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>form</span> <span class="token attr-name">method</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>POST<span class="token punctuation">"</span></span> <span class="token attr-name">action</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>{{ route('admin.password.email') }}<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>form</span> <span class="token attr-name">method</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>POST<span class="token punctuation">"</span></span> <span class="token attr-name">action</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>{{ route('admin.password.update') }}<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>form</span> <span class="token attr-name">method</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>POST<span class="token punctuation">"</span></span> <span class="token attr-name">action</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>{{ route('admin.register') }}<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>btn btn-link<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>{{ route('admin.password.request') }}<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span></code></pre><p>Set up the controller in app/Http/Controllers/AdministratorController.php file.</p><pre class="  language-javascript"><code class="  language-javascript"><span class="token operator">&lt;</span><span class="token operator">?</span>php
+namespace App\Http\Controllers<span class="token punctuation">;</span>
+use App\Administrator<span class="token punctuation">;</span>
+use Illuminate\Http\Request<span class="token punctuation">;</span>
+use Illuminate\Foundation\Auth\AuthenticatesUsers<span class="token punctuation">;</span>
+use Illuminate\Support\Facades\Auth<span class="token punctuation">;</span>
+<span class="token keyword">class</span> <span class="token class-name">AdministratorController</span> <span class="token keyword">extends</span> <span class="token class-name">Controller</span>
+<span class="token punctuation">{</span>
+    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function">__construct</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        $<span class="token keyword">this</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">middleware</span><span class="token punctuation">(</span><span class="token string">'auth:admins'</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token string">'only'</span> <span class="token operator">=&gt;</span> <span class="token punctuation">[</span><span class="token string">'secret'</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    use AuthenticatesUsers<span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function">showLoginForm</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token function">view</span><span class="token punctuation">(</span><span class="token string">'admin.login'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> $redirectTo <span class="token operator">=</span> <span class="token string">'admin/area'</span><span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function">secret</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        $user <span class="token operator">=</span> <span class="token function">auth</span><span class="token punctuation">(</span><span class="token string">'admins'</span><span class="token punctuation">)</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">user</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        echo <span class="token string">'Admin id #'</span><span class="token punctuation">.</span>$user<span class="token operator">-</span><span class="token operator">&gt;</span>id<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">protected</span> <span class="token keyword">function</span> <span class="token function">guard</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> Auth<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token function">guard</span><span class="token punctuation">(</span><span class="token string">'admins'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><p>Copy the emplate  from resources/views/auth/login.blade.php file and paste it in resources/views/admin/login.blade.php file.</p><pre class="  language-javascript"><code class="  language-javascript">@<span class="token keyword">extends</span><span class="token punctuation">(</span><span class="token string">'admin.app'</span><span class="token punctuation">)</span>
+<span class="token operator">...</span>
+<span class="token operator">&lt;</span>form method<span class="token operator">=</span><span class="token string">"POST"</span> action<span class="token operator">=</span><span class="token string">"{{ route('admin.login') }}"</span><span class="token operator">&gt;</span></code></pre><p>Drop the "Forgot Your Password?" link.</p><pre class="  language-javascript"><code class="  language-javascript">@<span class="token keyword">if</span> <span class="token punctuation">(</span>Route<span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token function">has</span><span class="token punctuation">(</span><span class="token string">'password.request'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token operator">&lt;</span>a <span class="token keyword">class</span><span class="token operator">=</span><span class="token string">"btn btn-link"</span> href<span class="token operator">=</span><span class="token string">"{{ route('password.request') }}"</span><span class="token operator">&gt;</span>
+        <span class="token punctuation">{</span><span class="token punctuation">{</span> <span class="token function">__</span><span class="token punctuation">(</span><span class="token string">'Forgot Your Password?'</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token operator">&lt;</span><span class="token operator">/</span>a<span class="token operator">&gt;</span>
+@endif</code></pre><p>Copy and paste from resources/views/layouts/app.blade.php to resources/views/admin/app.blade.php.</p><p>Replace the "Authentication Link" section by the following code.</p><pre class="  language-html"><code class="  language-html"><span class="token comment">&lt;!-- Authentication Links --&gt;</span>
+@if(auth('admins')-&gt;check())
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>nav-item dropdown<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>navbarDropdown<span class="token punctuation">"</span></span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>nav-link dropdown-toggle<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>#<span class="token punctuation">"</span></span> <span class="token attr-name">role</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>button<span class="token punctuation">"</span></span> <span class="token attr-name">data-toggle</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>dropdown<span class="token punctuation">"</span></span> <span class="token attr-name">aria-haspopup</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>true<span class="token punctuation">"</span></span> <span class="token attr-name">aria-expanded</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>false<span class="token punctuation">"</span></span> <span class="token attr-name">v-pre</span><span class="token punctuation">&gt;</span></span>
+            {{ auth('admins')-&gt;user()-&gt;name }} <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>span</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>caret<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>span</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>dropdown-menu dropdown-menu-right<span class="token punctuation">"</span></span> <span class="token attr-name">aria-labelledby</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>navbarDropdown<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>dropdown-item<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>{{ route('logout') }}<span class="token punctuation">"</span></span>
+                <span class="token attr-name">onclick</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>event.preventDefault();
+                                document.getElementById('logout-form').submit();<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+                {{ __('Logout') }}
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>form</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>logout-form<span class="token punctuation">"</span></span> <span class="token attr-name">action</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>{{ route('logout') }}<span class="token punctuation">"</span></span> <span class="token attr-name">method</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>POST<span class="token punctuation">"</span></span><span class="token style-attr language-css"><span class="token attr-name"> <span class="token attr-name">style</span></span><span class="token punctuation">="</span><span class="token attr-value"><span class="token property">display</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span></span><span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+                @csrf
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>form</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+@endif</code></pre><p>Laravel Jobs</p></div><div class="styler" style="display: none;"><div class="background"></div><textarea style="margin-top: 8px; margin-bottom: 8px; height: 423px;">Laravel Authenticatable</textarea><br><button>Duplicate</button><button>Delete</button><br><div class="buttons"><button>h1 </button><button>h2 </button><button>p </button><button>html </button><button>css </button><button>javascript </button><button>php </button></div><label for="up" class="btn btn-primary btn-block btn-outlined">Upload Json</label><input id="up" type="file" accept="text/plain" style="display: none;"><label for="down" class="btn btn-primary btn-block btn-outlined">Download Json</label><button id="down" style="display: none;">Export</button><label for="html" class="btn btn-primary btn-block btn-outlined">Download HTML</label><button id="html" style="display: none;">Export</button></div></div></div></div>
+<script src="/static/js/bundle.js"></script><script src="/static/js/0.chunk.js"></script><script src="/static/js/main.chunk.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+  <script src="https://federicozacayan.github.io/tutorial/js/prism.js"></script>
+
+
+
+</body></html>
